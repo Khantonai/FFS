@@ -18,15 +18,17 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('site_name');
             $table->string('title');
-            $table->string('activity');
+            $table->unsignedBigInteger('activity_id');
+            $table->foreign('activity_id')->references('id')->on('activities');
             $table->string('place');
             $table->date('date');
             $table->integer('distance');
             $table->integer('priority');
             $table->text('description');
             $table->string('image');
-            $table->string('state');
-            $table->string('last_modif');
+            $table->unsignedBigInteger('state_id');
+            $table->foreign('state_id')->references('id')->on('states');
+            $table->string('last_modif')->nullable();
             $table->timestamps();
         });
     }

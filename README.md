@@ -7,31 +7,31 @@ Ce guide vous aidera à configurer et à lancer le projet sur votre machine loca
 ## Prérequis
 • PHP
 • MySQL
-• phpMyAdmin
-• Serveur local (comme XAMPP pour Windows, MAMP pour Mac)
 
 ## Étapes
 
+### Installer MySQL
+Pour Windows et Mac, vous pouvez télécharger MySQL à partir de [ici](https://dev.mysql.com/downloads/installer/).
 
 ### Configurer le fichier .env
 
 Ouvrez le fichier '.env' dans l'éditeur de texte de votre choix. Trouvez et modifiez les lignes suivantes avec vos informations :
 
-'DB_PORT' : Remplacez sa valeur par le port de votre serveur local. Pour XAMPP, il s'agit généralement du port 3306. Pour MAMP, il s'agit généralement du port 8889.
+'DB_PORT' : Remplacez sa valeur par le port de votre serveur MySQL. Par défaut, il s'agit généralement du port 3306.
 
 'DB_USERNAME' : Remplacez sa valeur par le nom d'utilisateur de votre base de données. Généralement, il s'agit de 'root'.
 
-'DB_PASSWORD' : Remplacez sa valeur par le mot de passe de votre base de données. Pour XAMPP, il est généralement vide. Pour MAMP, il s'agit généralement de 'root'.
-
-### Lancer le serveur local
-
-Pour Windows : Ouvrez XAMPP Control Panel et démarrez Apache et MySQL.
-
-Pour Mac : Ouvrez MAMP et cliquez sur 'Start Servers'.
+'DB_PASSWORD' : Remplacez sa valeur par le mot de passe de votre base de données.
 
 ### Créer une base de données
 
-Ouvrez phpMyAdmin dans votre navigateur et créez une nouvelle base de données appelée 'ffs'.
+Ouvrez le terminal et connectez-vous à MySQL en utilisant la commande suivante :
+
+mysql -u root -p
+
+Ensuite, créez une nouvelle base de données appelée 'ffs' en utilisant la commande suivante :
+
+CREATE DATABASE ffs;
 
 ### Lancer le projet
 
@@ -40,9 +40,7 @@ Ouvrez un terminal dans le répertoire du projet et exécutez la commande 'php a
 ### Problèmes courants
 Si vous rencontrez des problèmes lors de l'exécution du projet, assurez-vous que :
 
-Votre serveur local est en cours d'exécution.
-Les informations de la base de données dans le fichier '.env' sont correctes.
-La base de données 'ffs' existe dans votre phpMyAdmin.
+Votre serveur MySQL est en cours d'exécution. Les informations de la base de données dans le fichier '.env' sont correctes. La base de données 'ffs' existe dans votre MySQL.
 
 
 

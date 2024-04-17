@@ -25,9 +25,9 @@ return new class extends Migration
             $table->integer('distance');
             $table->integer('priority');
             $table->text('description');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('last_modif')->nullable();
-            $table->string('published_at')->nullable();
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Styles -->
         <style>
             table {
@@ -37,6 +37,12 @@
                 border-radius: 5px;
                 text-align: center;
             }
+            .clickable-row {
+                cursor: pointer;
+            }
+            .clickable-row:hover {
+                background-color: #f0f0f0;
+            }
         </style>
     </head>
     <body>
@@ -49,28 +55,38 @@
                     <option value="{{ $activity }}" <?php if ($activity_select && $activity_select == $activity) {echo 'selected';} ?>>{{ $activity }}</option>
                 @endforeach
             </select>
+            <div>
+                <select name="date-period" id="date-period">
+                    <option value="before" <?php if ($date_period && $date_period == 'before') {echo 'selected';} ?>>Avant</option>
+                    <option value="after" <?php if ($date_period && $date_period == 'after') {echo 'selected';} ?>>Après</option>
+                    <option value="between" <?php if ($date_period && $date_period == 'between') {echo 'selected';} ?>>Entre</option>
+                </select>
+                <input type="date" name="date" value="{{ $date }}" id="date">
+                <input type="date" name="date2" value="{{ $date2 }}" style="<?php if ($date_period != 'between') {echo 'display: none;';} ?>" id="date2">
+                <input type="submit" value="Filtrer">
+            </div>
             <a href="/experiences" class="button">Réinitialiser</a>
         </form>
     <table>
         <thead>
             <tr>
                 <th>Titre</th>
-                <th>Utilisateur</th>
                 <th>Site</th>
                 <th>Activité</th>
-                <th>Date de création</th>
-                <th>Créé il y a</th>
+                <th>Date de l'exp.</th>
+                <th>Créé le</th>
+                <th>Publié</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($experiences as $experience)
-                <tr>
+                <tr class="clickable-row" data-href="/experiences/{{ $experience->id }}">
                     <td>{{ $experience->title }}</td>
-                    <td>{{ substr(hash('sha256', $experience->email), 0, 6) }}</td>                    
                     <td>{{ $experience->site_name }}</td>
                     <td>{{ $experience->activity->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($experience->date)->format('d/m/Y') }}</td>
                     <td>{{ $experience->created_at->format('d/m/Y') }}</td>
-                    <td>{{ $experience->created_at->diffForHumans() }}</td>
+                    <td>{{ \Carbon\Carbon::parse($experience->published_at)->diffForHumans() }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -92,8 +108,6 @@
             document.cookie = "searchFieldFocused=false; path=/";
         });
 
-        
-
         if (document.cookie.includes('searchFieldFocused=true')) {
             document.getElementById('search-field').focus(); 
             document.getElementById('search-field').selectionStart = document.getElementById('search-field').value.length;
@@ -105,6 +119,17 @@
 
         document.getElementById('activity-select').addEventListener('input', function() {
             document.getElementById('search-form').submit();
+        });
+
+        document.getElementById('date-period').addEventListener('input', function() {
+            document.getElementById('search-form').submit();
+        });
+
+
+        $(document).ready(function($) {
+            $(".clickable-row").click(function() {
+                window.location = $(this).data("href");
+            });
         });
 
     </script>

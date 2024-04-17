@@ -35,6 +35,7 @@ class ExperienceSeeder extends Seeder
                 'description' => 'This was an exciting exploration journey into the depths of Caverna de São Tomé. We discovered several new chambers and documented unique geological formations.',
                 'image' => 'https://placehold.co/400',
                 'last_modif' => '',
+                'published_at' => '2023-07-20 12:00:00',
             ],
             [
                 'email' => 'jane@example.com',
@@ -50,6 +51,7 @@ class ExperienceSeeder extends Seeder
                 'description' => 'Our team conducted a comprehensive survey of the Mammoth Cave system, mapping out passages and measuring distances. The data collected will contribute to our understanding of this vast cave network.',
                 'image' => 'https://placehold.co/400',
                 'last_modif' => 'p1err0t',
+                'published_at' => now(),
             ],
         ];
 

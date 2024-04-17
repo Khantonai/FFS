@@ -21,56 +21,14 @@ class ActivitySeeder extends Seeder
     {
        $activities = [
             [
-                'name' => 'Exploration',
+                'name' => 'Spéléologie',
             ],
             [
-                'name' => 'Topographie',
+                'name' => 'Canyoning',
             ],
             [
-                'name' => 'Photographie',
-            ],
-            [
-                'name' => 'Étude géologique',
-            ],
-            [
-                'name' => 'Cartographie',
-            ],
-            [
-                'name' => 'Recherche scientifique',
-            ],
-            [
-                'name' => 'Plongée souterraine',
-            ],
-            [
-                'name' => 'Escalade',
-            ],
-            [
-                'name' => 'Randonnée',
-            ],
-            [
-                'name' => 'Formation en spéléologie',
-            ],
-            [
-                'name' => 'Expéditions',
-            ],
-            [
-                'name' => 'Protection de l\'environnement',
-            ],
-            [
-                'name' => 'Documentation',
-            ],
-            [
-                'name' => 'Archéologie',
-            ],
-            [
-                'name' => 'Enseignement et sensibilisation',
-            ],
-            [
-                'name' => 'Sauvetage',
-            ],
-            [
-                'name' => 'Autre',
-            ],
+                'name' => 'Exploration Sous-marine',
+            ]
         ];
 
         foreach ($activities as $activity) {

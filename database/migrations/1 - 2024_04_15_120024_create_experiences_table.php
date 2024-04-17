@@ -26,9 +26,8 @@ return new class extends Migration
             $table->integer('priority');
             $table->text('description');
             $table->string('image');
-            $table->unsignedBigInteger('state_id');
-            $table->foreign('state_id')->references('id')->on('states');
             $table->string('last_modif')->nullable();
+            $table->string('published_at')->nullable();
             $table->timestamps();
         });
     }

@@ -120,10 +120,8 @@ class ExperienceController extends Controller
         $experience->first_name = $request->input('first_name');
         $experience->last_name = $request->input('last_name');
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->getRealPath();
-            $imageFile = file_get_contents($imagePath);
-            $base64Image = base64_encode($imageFile);
-            $experience->image = $base64Image;
+            $imagePath = $request->file('image')->store('images', 'public');
+            $experience->image = $imagePath;
         }
         $experience->save();
 

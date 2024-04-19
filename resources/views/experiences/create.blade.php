@@ -272,7 +272,7 @@
         <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
     </header>
     <main>
-        <form method="POST" action="{{ route('experiences.create') }}">
+        <form method="POST" action="{{ route('experiences.create') }}" enctype="multipart/form-data">
             @csrf
             <section class="first-step active">
                 <h2>Vos coordonnées</h2>
@@ -313,7 +313,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="distance">Altitude*</label>
+                    <label for="distance">Altitude (en mètres)*</label>
                     <input type="number" name="distance" id="distance" placeholder="Altitude" required disabled>
                 </div>
                 <div>

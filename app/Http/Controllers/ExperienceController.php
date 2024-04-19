@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Experience;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use DateTime;
 
@@ -15,7 +16,7 @@ class ExperienceController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $activity_select = $request->get('activity');
+        $activity_select = $request->get('activity-select');
         $date = $request->get('date');
         $date2 = $request->get('date2');
         $formatted_date = new DateTime($date);
@@ -46,14 +47,16 @@ class ExperienceController extends Controller
         }
 
         $experiences = $query->orderBy('published_at', 'desc')->get();
-        $activities = Experience::with('activity')->get()->pluck('activity.name')->unique();
+        $activities = Activity::all();
 
-        return view('experiences.index', compact('experiences', 'activities'), [
+        return view('experiences.index', [
             'search' => $search,
             'activity_select' => $activity_select,
             'date_period' => $date_period,
             'date' => $date,
             'date2' => $date2,
+            'experiences' => $experiences,
+            'activities' => $activities
         ]);
     }
 
@@ -63,7 +66,7 @@ class ExperienceController extends Controller
      */
     public function create()
     {
-        //
+        return view('experiences.create', ['activities' => Activity::all()]);
     }
 
     /**
@@ -71,7 +74,61 @@ class ExperienceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'place' => 'required',
+            'site_name' => 'required',
+            'title' => 'required',
+            'date' => 'required|date',
+            'activity_id' => 'required|exists:activities,id',
+            'description' => 'required',
+            'distance' => 'required|integer',
+            'priority' => 'required|integer',
+        ], [
+            'email.required' => "L'email est requis.",
+            'email.email' => "L'email doit être une adresse email valide.",
+            'first_name.required' => "Le prénom est requis.",
+            'last_name.required' => "Le nom est requis.",
+            'place.required' => "Le lieu est requis.",
+            'site_name.required' => "Le nom du site est requis.",
+            'title.required' => "Le titre est requis.",
+            'date.required' => "La date est requise.",
+            'date.date' => "La date doit être une date valide.",
+            'activity_id.required' => "L'activité est requise.",
+            'activity_id.exists' => "L'activité n'existe pas.",
+            'description.required' => "La description est requise.",
+            'distance.required' => "L'altitude est requise.",
+            'distance.integer' => "L'altitude doit être un nombre entier.",
+            'priority.required' => "La priorité est requise.",
+            'priority.integer' => "La priorité doit être un nombre entier.",
+        ]);
+
+
+
+        $experience = new Experience();
+        $experience->title = $request->input('title');
+        $experience->site_name = $request->input('site_name');
+        $experience->date = $request->input('date');
+        $experience->activity_id = $request->input('activity_id');
+        $experience->place = $request->input('place');
+        $experience->description = $request->input('description');
+        $experience->distance = $request->input('distance');
+        $experience->priority = $request->input('priority');
+        $experience->email = $request->input('email');
+        $experience->first_name = $request->input('first_name');
+        $experience->last_name = $request->input('last_name');
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->getRealPath();
+            $imageFile = file_get_contents($imagePath);
+            $base64Image = base64_encode($imageFile);
+            $experience->image = $base64Image;
+        }
+        $experience->save();
+
+        return redirect()->route('experiences.create', ['activities' => Activity::all()])->with('success', 'Expérience ajoutée avec succès.');
+
     }
 
     /**

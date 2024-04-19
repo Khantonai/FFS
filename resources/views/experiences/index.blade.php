@@ -1,58 +1,43 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-        <title>Expériences</title>
+@section('title', 'Expériences')
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- Styles -->
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                width: fit-content;
-            }
-            td {
-                border: 1px solid #000;
-                padding: 0.5rem;
-                width: fit-content;
-            }
-            th {
-                border: 1px solid #000;
-                padding: 0.5rem;
-                background-color: #f0f0f0;
-                width: fit-content;
-            }
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #007BFF;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                text-align: center;
-            }
-            .clickable-row {
-                cursor: pointer;
-            }
-            .clickable-row:hover {
-                background-color: #f0f0f0;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Expériences</h1>
+@section('style')
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            width: fit-content;
+        }
+        td {
+            border: 1px solid #000;
+            padding: 0.5rem;
+            width: fit-content;
+        }
+        th {
+            border: 1px solid #000;
+            padding: 0.5rem;
+            background-color: #f0f0f0;
+            width: fit-content;
+        }
+        .clickable-row {
+            cursor: pointer;
+        }
+        .clickable-row:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <h1>Expériences</h1>
+        <a href="{{ route('experiences.create') }}" class="button">Ajouter une expérience</a>
         <form action="/experiences" method="GET" id="search-form">
             <input type="text" name="search" placeholder="Rechercher..." id="search-field" value="{{ $search }}">
-            <select name="activity" id="activity-select">
+            <select name="activity-select" id="activity-select">
                 <option value="">Toutes les activités</option>
                 @foreach ($activities as $activity)
-                    <option value="{{ $activity }}" <?php if ($activity_select && $activity_select == $activity) {echo 'selected';} ?>>{{ $activity }}</option>
+                    <option value="{{ $activity->name }}" <?php if ($activity_select && $activity_select == $activity->name) {echo 'selected';} ?>>{{ $activity->name }}</option>
                 @endforeach
             </select>
             <div>
@@ -80,7 +65,7 @@
         </thead>
         <tbody>
             @foreach ($experiences as $experience)
-                <tr class="clickable-row" data-href="/experiences/{{ $experience->id }}">
+                <tr class="clickable-row" data-href="{{ route('experiences.show', $experience->id) }}">
                     <td>{{ $experience->title }}</td>
                     <td>{{ $experience->site_name }}</td>
                     <td>{{ $experience->activity->name }}</td>
@@ -91,12 +76,6 @@
             @endforeach
         </tbody>
     </table>
-
-        
-
-
-
-    </body>
     <script>
         var searchField = document.getElementById('search-field');
 
@@ -126,11 +105,18 @@
         });
 
 
-        $(document).ready(function($) {
-            $(".clickable-row").click(function() {
-                window.location = $(this).data("href");
+        document.addEventListener('DOMContentLoaded', function() {
+            var rows = document.querySelectorAll('.clickable-row');
+
+            rows.forEach(function(row) {
+                row.addEventListener('click', function() {
+                    window.location = row.getAttribute('data-href');
+                    console.log('clicked');
+                });
             });
         });
 
+        
+
     </script>
-</html>
+@endsection

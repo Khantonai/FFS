@@ -77,6 +77,30 @@
             @endforeach
         </tbody>
     </table>
+
+    <form method="POST" action="/dashboard">
+        @csrf
+        <input type="submit" value="Créer une invitation">
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Créé par</th>
+                <th>Créé le</th>
+                <th>Lien</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($invitations as $invitation)
+                <tr>
+                    <td>{{ $invitation->user }}</td>
+                    <td>{{ $invitation->created_at->format('d/m/Y') }}</td>
+                    <td>{{ $invitation->token }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
     
     <script>
         var searchField = document.getElementById('search-field');

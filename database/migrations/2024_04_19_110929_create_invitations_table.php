@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('user');
             $table->string('token');
             $table->string('email_registered')->nullable();
             $table->timestamps();

@@ -15,6 +15,7 @@ Route::get('/experiences/create', [ExperienceController::class, 'create'])->name
 Route::post('/experiences/create', [ExperienceController::class, 'store'])->name('experiences.create');
 Route::get('/experiences/{experience}', [ExperienceController::class, 'show'])->name('experiences.show');
 Route::get('/experiences/{experience}/edit', [ExperienceController::class, 'edit'])->name('experiences.edit');
+Route::put('/experiences/{experience}/edit', [ExperienceController::class, 'update'])->name('experiences.update');
 
 
 Route::get('/dashboard', [UserController::class, 'index'])->name('users.index');
@@ -24,6 +25,7 @@ Route::post('/users/create', [UserController::class, 'store'])->name('users.stor
 
 Route::get('/login', [LoginController::class, 'index'])->name('users.login');
 Route::post('/login', [LoginController::class, 'login'])->name('users.login');
+
 
 
 // Route::resource('experiences', ExperienceController::class);

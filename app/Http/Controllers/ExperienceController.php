@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Experience;
 use App\Models\Activity;
+use App\Models\Edit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DateTime;
 
 class ExperienceController extends Controller
@@ -23,7 +25,9 @@ class ExperienceController extends Controller
         $formatted_date2 = new DateTime($date2);
         $date_period = $request->get('date-period');
 
-        $query = Experience::query();
+        $query = Experience::query()->whereNotNull('published_at');
+
+
 
         if ($activity_select) {
             $query->whereHas('activity', function ($query) use ($activity_select) {
@@ -66,7 +70,7 @@ class ExperienceController extends Controller
      */
     public function create()
     {
-        return view('experiences.create', ['activities' => Activity::all()]);
+        return view('experiences.create', ['experience' => null, 'activities' => Activity::all()]);
     }
 
     /**
@@ -134,7 +138,15 @@ class ExperienceController extends Controller
      */
     public function show(Experience $experience)
     {
-        return view('experiences.show', ['experience' => $experience]);
+        if (Auth::check()) {
+
+        $edits = Edit::where('experience_id', $experience->id)
+                ->orderBy('updated_at', 'desc')
+                ->get();
+            return view('experiences.show', ['experience' => $experience, 'edits' => $edits]);
+        } else {
+            return view('experiences.show', ['experience' => $experience, 'edits' => null]);
+        }
     }
 
     /**
@@ -143,6 +155,11 @@ class ExperienceController extends Controller
     public function edit(Experience $experience)
     {
         //
+        if (Auth::check()) {
+            return view('experiences.create', ['experience' => $experience, 'activities' => Activity::all()]);
+        } else {
+            return redirect('login');
+        }
     }
 
     /**
@@ -151,6 +168,68 @@ class ExperienceController extends Controller
     public function update(Request $request, Experience $experience)
     {
         //
+        $request->validate([
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'place' => 'required',
+            'site_name' => 'required',
+            'title' => 'required',
+            'date' => 'required|date',
+            'activity_id' => 'required|exists:activities,id',
+            'description' => 'required',
+            'distance' => 'required|integer',
+            'priority' => 'required|integer',
+        ], [
+            'email.required' => "L'email est requis.",
+            'email.email' => "L'email doit être une adresse email valide.",
+            'first_name.required' => "Le prénom est requis.",
+            'last_name.required' => "Le nom est requis.",
+            'place.required' => "Le lieu est requis.",
+            'site_name.required' => "Le nom du site est requis.",
+            'title.required' => "Le titre est requis.",
+            'date.required' => "La date est requise.",
+            'date.date' => "La date doit être une date valide.",
+            'activity_id.required' => "L'activité est requise.",
+            'activity_id.exists' => "L'activité n'existe pas.",
+            'description.required' => "La description est requise.",
+            'distance.required' => "L'altitude est requise.",
+            'distance.integer' => "L'altitude doit être un nombre entier.",
+            'priority.required' => "La priorité est requise.",
+            'priority.integer' => "La priorité doit être un nombre entier.",
+        ]);
+
+        $experience->title = $request->input('title');
+        $experience->site_name = $request->input('site_name');
+        $experience->date = $request->input('date');
+        $experience->activity_id = $request->input('activity_id');
+        $experience->place = $request->input('place');
+        $experience->description = $request->input('description');
+        $experience->distance = $request->input('distance');
+        $experience->priority = $request->input('priority');
+        $experience->email = $request->input('email');
+        $experience->first_name = $request->input('first_name');
+        $experience->last_name = $request->input('last_name');
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+            $experience->image = $imagePath;
+        }
+    
+        $edit = Edit::where('experience_id', $experience->id)
+        ->where('user_id', Auth::id())
+        ->first();
+
+        if (!$edit) {
+            $edit = new Edit();
+        }
+        $edit->experience_id = $experience->id;
+        $edit->user_id = Auth::id();
+        $edit->save();
+
+        $experience->save();
+        
+
+        return redirect()->route('experiences.show', ['experience' => $experience])->with('success', 'Expérience modifiée avec succès.');
     }
 
     /**

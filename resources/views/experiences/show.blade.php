@@ -69,11 +69,39 @@
         text-align: center;
     }
 
+    table {
+            width: 100%;
+            border-collapse: collapse;
+            width: fit-content;
+        }
+        td {
+            border: 1px solid #000;
+            padding: 0.5rem;
+            width: fit-content;
+        }
+        th {
+            border: 1px solid #000;
+            padding: 0.5rem;
+            background-color: #f0f0f0;
+            width: fit-content;
+        }
+
     </style>
 @endsection
 
 @section('content')
+
+
 <main>
+    @if($experience != null && Auth::check())
+        <div>
+            <div style="display: flex; gap:5px;">
+                <p>{{ $experience->first_name }}</p>
+                <p>{{ $experience->last_name }}</p>
+            </div>
+            <p>{{ $experience->email }}</p>
+        </div>
+    @endif
     <section>
         <h1>{{ $experience->title }}</h1>
         <div id="location">
@@ -108,9 +136,39 @@
                 } ?>
             <p><span>Priorité :</span> {{ $priorityText }}</p>
             <div class="divider"></div>
-            <p>Publié le {{ \Carbon\Carbon::parse($experience->published_at)->format('d/m/y') }} à {{ \Carbon\Carbon::parse($experience->published_at)->format('h:m') }}</p>
+            @if ($experience->published_at)
+                <p>Publié le {{ \Carbon\Carbon::parse($experience->published_at)->format('d/m/y') }} à {{ \Carbon\Carbon::parse($experience->published_at)->format('H:i') }}</p>
+            @else
+                <p>Non publié</p>
+            @endif
         </div>
         <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
+        @auth
+            <a href="{{ route('experiences.edit', $experience->id) }}" class="button">Modifier</a>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Modifié le</th>
+                        <th>Par</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($edits->isEmpty())
+                        <tr>
+                            <td colspan="2">Aucune modification</td>
+                        </tr>
+                    @else
+
+                        @foreach ($edits as $edit)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($edit->updated_at)->format('d/m/y à H:i') }}</td>
+                                <td>{{ $edit->user->pseudo }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        @endauth
     </section>
 </main>
     

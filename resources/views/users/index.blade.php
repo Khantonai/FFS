@@ -31,7 +31,6 @@
 
 @section('content')
     <h1>Dashboard</h1>
-        <a href="{{ route('experiences.create') }}" class="button">Ajouter une expérience</a>
         <form action="/experiences" method="GET" id="search-form">
             <input type="text" name="search" placeholder="Rechercher..." id="search-field" value="{{ $search }}">
             <select name="activity-select" id="activity-select">
@@ -52,6 +51,10 @@
             </div>
             <a href="/experiences" class="button">Réinitialiser</a>
         </form>
+        <br>
+        <a href="{{ route('experiences.create') }}" class="button">Ajouter une expérience</a>
+        <br>
+        <br>
     <table>
         <thead>
             <tr>
@@ -74,6 +77,7 @@
             @endforeach
         </tbody>
     </table>
+    
     <script>
         var searchField = document.getElementById('search-field');
 

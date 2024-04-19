@@ -254,8 +254,13 @@
 @section('content')
     <header>
         <div id="notification">Veuillez remplir tous les champs obligatoires de l'étape <span></span>.</div>
-        <h1>Soumettre une expérience</h1>
-        <p>Ce formulaire vous permet de créer une nouvelle expérience. Veuillez remplir tous les champs requis et cliquer sur le bouton 'Soumettre' lorsque vous avez terminé.</p>        @if(session('success'))
+        @if($experience != null && Auth::check())
+            <h1>Modifier une expérience</h1>
+        @else
+            <h1>Soumettre une expérience</h1>
+            <p>Ce formulaire vous permet de créer une nouvelle expérience. Veuillez remplir tous les champs requis et cliquer sur le bouton 'Soumettre' lorsque vous avez terminé.</p>        
+        @endif
+        @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -269,60 +274,70 @@
                 </ul>
             </div>
         @endif
-        <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
+        @if($experience != null && Auth::check())
+            <a href="{{ route('users.index') }}" class="button">Retourner au dashboard</a>
+        @else
+            <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
+        @endif
     </header>
     <main>
-        <form method="POST" action="{{ route('experiences.create') }}" enctype="multipart/form-data">
-            @csrf
+        @if($experience != null && Auth::check())
+            <form method="POST" action="{{ route('experiences.edit', ['experience' => $experience->id]) }}" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+        @else
+            <form method="POST" action="{{ route('experiences.create') }}" enctype="multipart/form-data">
+                @csrf
+        @endif
             <section class="first-step active">
                 <h2>Vos coordonnées</h2>
                 <div>
                     <label for="email">Adresse e-mail*</label>
-                    <input type="email" name="email" id="email" placeholder="Adresse e-mail" required>
+                    <input type="email" name="email" id="email" placeholder="Adresse e-mail"<?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->email.'"' : ''; ?> required>
                 </div>
                 <div>
                     <label for="first_name">Prénom*</label>
-                    <input type="text" name="first_name" id="first_name" placeholder="Prénom">
+                    <input type="text" name="first_name" id="first_name" placeholder="Prénom" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->first_name.'"' : ''; ?> required>
                 </div>
                 <div>
                     <label for="last_name">Nom*</label>
-                    <input type="text" name="last_name" id="last_name" placeholder="Nom" required>
+                    <input type="text" name="last_name" id="last_name" placeholder="Nom" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->last_name.'"' : ''; ?> required>
                 </div>
             </section>
             <section class="second-step">
                 <h2>Informations sur l'expérience</h2>
                 <div>
                     <label for="site_name">Nom du site*</label>
-                    <input type="text" name="site_name" id="site_name" placeholder="Nom du site" required disabled>
+                    <input type="text" name="site_name" id="site_name" placeholder="Nom du site" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->site_name.'"' : 'disabled'; ?> required>
                 </div>
                 <div>
                     <label for="place">Lieu*</label>
-                    <input type="text" name="place" id="place" placeholder="Lieu" required disabled>
+                    <input type="text" name="place" id="place" placeholder="Lieu" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->place.'"' : 'disabled'; ?> required>
                 </div>
                 <div>
                     <label for="date">Date*</label>
-                    <input type="date" name="date" id="date" required disabled>
+                    <input type="date" name="date" id="date" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->date.'"' : 'disabled'; ?> required>
                 </div>
                 <div>
                     <label for="activity_id">Activité*</label>
-                    <select name="activity_id" id="activity_id" required disabled>
+                    <select name="activity_id" id="activity_id" required <?php echo ($experience != null && Auth::check()) ? '' : 'disabled'; ?>>
                         <option value="">Choisissez une activité</option>
                         @foreach ($activities as $activity)
-                            <option value="{{ $activity->id }}">{{ $activity->name }}</option>
+                            <option value="{{ $activity->id }}"<?php echo ($experience != null && Auth::check() && $experience->activity_id == $activity->id) ? 'selected' : ''; ?>>{{ $activity->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
                     <label for="distance">Altitude (en mètres)*</label>
-                    <input type="number" name="distance" id="distance" placeholder="Altitude" required disabled>
+                    <input type="number" name="distance" id="distance" placeholder="Altitude" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->distance.'"' : 'disabled'; ?> required>
                 </div>
                 <div>
                     <label for="priority">Priorité</label>
-                    <select name="priority" id="priority" disabled>
-                        <option value="1">Pas d'urgence</option>
-                        <option value="2">À surveiller</option>
-                        <option value="3">Urgent</option>
-                        <option value="4">Dangereux</option>
+                    <select name="priority" id="priority" <?php echo ($experience != null && Auth::check()) ? '' : 'disabled'; ?>>
+                        <option value="1" <?php echo ($experience != null && Auth::check() && $experience->priority == 1) ? 'selected' : ''; ?>>Pas d'urgence</option>
+                        <option value="2" <?php echo ($experience != null && Auth::check() && $experience->priority == 2) ? 'selected' : ''; ?>>À surveiller</option>
+                        <option value="3" <?php echo ($experience != null && Auth::check() && $experience->priority == 3) ? 'selected' : ''; ?>>Urgent</option>
+                        <option value="4" <?php echo ($experience != null && Auth::check() && $experience->priority == 4) ? 'selected' : ''; ?>>Dangereux</option>
                     </select>
                 </div>
             </section>
@@ -330,17 +345,21 @@
                 <h2>Décrivez en détails l'expérience</h2>
                 <div>
                     <label for="title">Titre</label>
-                    <input type="text" name="title" id="title" placeholder="Titre" disabled>
+                    <input type="text" name="title" id="title" placeholder="Titre" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->title.'"' : 'disabled'; ?>>
                 </div>
 
                 <div>
                     <label for="description">Description</label>
-                    <textarea name="description" id="description" placeholder="Description" disabled></textarea>
+                    @if($experience != null && Auth::check())
+                        <textarea name="description" id="description" placeholder="Description">{{ $experience->description }}</textarea>
+                    @else
+                        <textarea name="description" id="description" placeholder="Description" disable></textarea>
+                    @endif
                 </div>
 
                 <div>
                     <label for="image">Image</label>
-                    <input type="file" name="image" id="image" accept="image/png, image/jpeg, image/gif, image/bmp, image/svg+xml, image/webp, image/heif, image/heic" disabled>
+                    <input type="file" name="image" id="image" accept="image/png, image/jpeg, image/gif, image/bmp, image/svg+xml, image/webp, image/heif, image/heic" <?php echo ($experience != null && Auth::check()) ? '' : 'disabled'; ?>>
                 </div>
             </section>
             <section id="resume" class="hide">
@@ -358,15 +377,22 @@
                 <label id="resume-priority" for="priority" class="second-step"></label>
                 
                 <label id="resume-description" for="description" class="third-step"></label>
-                <label id="resume-image" for="image" class="third-step">Pas d'image renseignée</label>
+                @if($experience != null && Auth::check())
+                    <label id="resume-image" for="image" class="third-step"><img src="{{ $experience->image }}" alt=""></label>
+                @else
+                    <label id="resume-image" for="image" class="third-step">Pas d'image renseignée</label>
+                @endif
                 
                 <label id="resume-email" for="email" class="first-step"></label>
                 <div style="flex-direction: row; gap: 5px; align-items: center;">
                     <label id="resume-first_name" for="first_name" class="first-step"></label>
                     <label id="resume-last_name" for="last_name" class="first-step"></label>
                 </div>
-
-                <input type="submit" value="Soumettre l'expérience">
+                @if($experience != null && Auth::check())
+                    <input type="submit" value="Mettre à jour l'expérience">
+                @else
+                    <input type="submit" value="Soumettre l'expérience">
+                @endif
             </section>
         </form>
         <ul class="step-viewer">
@@ -475,6 +501,24 @@
 
             reader.readAsDataURL(file);
         });
+
+        <?php 
+            if($experience != null && Auth::check()) {
+                echo 'resumeEmail.textContent = "'.$experience->email.'";';
+                echo 'resumeFirstName.textContent = "'.$experience->first_name.'";';
+                echo 'resumeLastName.textContent = "'.$experience->last_name.'";';
+                echo 'resumeSiteName.textContent = "'.$experience->site_name.'";';
+                echo 'resumePlace.textContent = "'.$experience->place.'";';
+                echo 'resumeDate.textContent = "'.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
+                echo 'resumeActivityId.textContent = "'.$experience->activity->name.'";';
+                echo 'resumeDistance.textContent = "'.$experience->distance.'";';
+                echo 'resumePriority.textContent = "'.$experience->priority.'";';
+                echo 'resumeTitle.textContent = "'.$experience->title.'";';
+                echo 'resumeDescription.textContent = "'.$experience->description.'";';
+                echo 'resumeImage.innerHTML = "<img src=\"'.$experience->image.'\" alt=\"\"/>";';
+            }
+
+        ?>
 
         //=============================================
 

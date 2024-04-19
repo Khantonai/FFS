@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Experience;
 use App\Models\Activity;
+use App\Models\Edit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
@@ -53,6 +54,7 @@ class UserController extends Controller
             $experiences = $query->orderBy('published_at', 'desc')->get();
             $activities = Activity::all();
 
+
             return view('users.index', [
                 'search' => $search,
                 'activity_select' => $activity_select,
@@ -60,7 +62,7 @@ class UserController extends Controller
                 'date' => $date,
                 'date2' => $date2,
                 'experiences' => $experiences,
-                'activities' => $activities
+                'activities' => $activities,
             ]);
         } else {
             return redirect('login');

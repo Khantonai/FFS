@@ -20,8 +20,8 @@ Route::put('/experiences/{experience}/edit', [ExperienceController::class, 'upda
 
 Route::get('/dashboard', [UserController::class, 'index'])->name('users.index');
 
-Route::get('/users/create/{token}', 'UserController@create')->name('users.create');
-Route::post('/users/create/{token}', [UserController::class, 'store'])->name('users.store');
+// Route::get('/users/create/{token}', 'UserController@create')->name('users.create');
+// Route::post('/users/create/{token}', [UserController::class, 'store'])->name('users.store');
 
 Route::post('/dashboard', [LoginController::class, 'storeToken'])->name('users.storeToken');
 

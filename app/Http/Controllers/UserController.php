@@ -145,30 +145,30 @@ class UserController extends Controller
         //
     }
 
-    public function storeToken(Request $request)
-    {
-        if (Auth::check()) {
-            // Obtenir l'utilisateur connecté
-            $user = Auth::user();
+    // public function storeToken(Request $request)
+    // {
+    //     if (Auth::check()) {
+    //         // Obtenir l'utilisateur connecté
+    //         $user = Auth::user();
 
-            $token = Str::random(16);
+    //         $token = Str::random(16);
 
-            while (Invitation::where('token', $token)->exists()) {
-                $token = Str::random(16);
-            }
+    //         while (Invitation::where('token', $token)->exists()) {
+    //             $token = Str::random(16);
+    //         }
 
-            Invitation::create([
-                'username' => $user->username,
-                'token' => $token,
-            ]);
+    //         Invitation::create([
+    //             'username' => $user->username,
+    //             'token' => $token,
+    //         ]);
 
-            $url = route('users.create', ['token' => $token]);
+    //         $url = route('users.create', ['token' => $token]);
 
-            return response()->json(['success' => 'Token created successfully']);
-        } else {
-            return response()->json(['error' => 'User not logged in'], 401);
-        }
-    }
+    //         return response()->json(['success' => 'Token created successfully']);
+    //     } else {
+    //         return response()->json(['error' => 'User not logged in'], 401);
+    //     }
+    // }
 
 
 }

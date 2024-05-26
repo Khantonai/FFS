@@ -75,13 +75,12 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($token)
+    public function create()
     {
-        // Vérifier si le token existe
-        // $invitation = Invitation::where('token', $token)->firstOrFail();
-
-        // Passer le token à la vue
-        return view('users.create', ['token' => $token]);
+        if (Auth::check()) {
+            return redirect()->intended('dashboard');
+        }
+       return view('users.create');
     }
 
     /**
@@ -144,31 +143,5 @@ class UserController extends Controller
     {
         //
     }
-
-    // public function storeToken(Request $request)
-    // {
-    //     if (Auth::check()) {
-    //         // Obtenir l'utilisateur connecté
-    //         $user = Auth::user();
-
-    //         $token = Str::random(16);
-
-    //         while (Invitation::where('token', $token)->exists()) {
-    //             $token = Str::random(16);
-    //         }
-
-    //         Invitation::create([
-    //             'username' => $user->username,
-    //             'token' => $token,
-    //         ]);
-
-    //         $url = route('users.create', ['token' => $token]);
-
-    //         return response()->json(['success' => 'Token created successfully']);
-    //     } else {
-    //         return response()->json(['error' => 'User not logged in'], 401);
-    //     }
-    // }
-
 
 }

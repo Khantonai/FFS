@@ -10,6 +10,8 @@ class Edit extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'pseudo', 'email', 'password'];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');

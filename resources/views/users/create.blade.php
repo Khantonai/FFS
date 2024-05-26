@@ -49,7 +49,7 @@
 <main>
 
     <h1>Créer un utilisateur</h1>
-    <form action="{{ route('users.store') }}" method="POST">
+    <form action="{{ route('users.register') }}" method="POST">
         @csrf
         <label for="pseudo">
             Pseudo*

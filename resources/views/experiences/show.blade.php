@@ -4,7 +4,6 @@
 
 @section('style')
 <style>
-
     main {
         width: calc(100% - 460px);
         padding: 40px;
@@ -41,8 +40,8 @@
 
     }
 
-    #information > div {
-        
+    #information>div {
+
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -50,7 +49,7 @@
         border-radius: 20px;
         background-color: var(--green);
         color: white;
-        
+
     }
 
     #information span {
@@ -70,23 +69,24 @@
     }
 
     table {
-            width: 100%;
-            border-collapse: collapse;
-            width: fit-content;
-        }
-        td {
-            border: 1px solid #000;
-            padding: 0.5rem;
-            width: fit-content;
-        }
-        th {
-            border: 1px solid #000;
-            padding: 0.5rem;
-            background-color: #f0f0f0;
-            width: fit-content;
-        }
+        width: 100%;
+        border-collapse: collapse;
+        width: fit-content;
+    }
 
-    </style>
+    td {
+        border: 1px solid #000;
+        padding: 0.5rem;
+        width: fit-content;
+    }
+
+    th {
+        border: 1px solid #000;
+        padding: 0.5rem;
+        background-color: #f0f0f0;
+        width: fit-content;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -118,33 +118,41 @@
             <p><span>Date de l'expérience :</span> {{ \Carbon\Carbon::parse($experience->date)->format('d/m/y') }}</p>
             <p><span>Altitude :</span> {{ $experience->distance }}m</p>
             <?php
-                switch($experience->priority) {
-                    case 1:
-                        $priorityText = "Pas d'urgence";
-                        break;
-                    case 2:
-                        $priorityText = "À surveiller";
-                        break;
-                    case 3:
-                        $priorityText = "Urgent";
-                        break;
-                    case 4:
-                        $priorityText = "Dangereux";
-                        break;
-                    default:
-                        $priorityText = "Non défini";
-                } ?>
+switch ($experience->priority) {
+    case 1:
+        $priorityText = "Pas d'urgence";
+        break;
+    case 2:
+        $priorityText = "À surveiller";
+        break;
+    case 3:
+        $priorityText = "Urgent";
+        break;
+    case 4:
+        $priorityText = "Dangereux";
+        break;
+    default:
+        $priorityText = "Non défini";
+} ?>
             <p><span>Priorité :</span> {{ $priorityText }}</p>
             <div class="divider"></div>
             @if ($experience->published_at)
-                <p>Publié le {{ \Carbon\Carbon::parse($experience->published_at)->format('d/m/y') }} à {{ \Carbon\Carbon::parse($experience->published_at)->format('H:i') }}</p>
+                <p>Publié le {{ \Carbon\Carbon::parse($experience->published_at)->format('d/m/y') }} à
+                    {{ \Carbon\Carbon::parse($experience->published_at)->format('H:i') }}</p>
             @else
                 <p>Non publié</p>
             @endif
         </div>
         <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
         @auth
-            <a href="{{ route('experiences.edit', $experience->id) }}" class="button">Modifier</a>
+            @if (!$experience->published_at)
+                <a href="{{ route('experiences.edit', $experience->id) }}" class="button">Modifier</a>
+                <form method="POST" action="{{ route('experiences.publish', $experience->id) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary" value="published">Publier</button>
+                </form>
+            @endif
+
             <table>
                 <thead>
                     <tr>
@@ -158,7 +166,6 @@
                             <td colspan="2">Aucune modification</td>
                         </tr>
                     @else
-
                         @foreach ($edits as $edit)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($edit->updated_at)->format('d/m/y à H:i') }}</td>
@@ -171,5 +178,4 @@
         @endauth
     </section>
 </main>
-    
 @endsection

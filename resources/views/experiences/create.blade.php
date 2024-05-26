@@ -81,7 +81,7 @@
             right: 50vw;
             transform: translateX(50%);
             width: 400px;
-            height: min(600px, calc(100vh - 80px));
+            height: min(600px, calc(100vh - 180px));
             overflow-y: scroll;
             justify-content: flex-start;
         }
@@ -252,6 +252,7 @@
 @endsection
 
 @section('content')
+  
     <header>
         <div id="notification">Veuillez remplir tous les champs obligatoires de l'étape <span></span>.</div>
         @if($experience != null && Auth::check())
@@ -282,7 +283,7 @@
     </header>
     <main>
         @if($experience != null && Auth::check())
-            <form method="POST" action="{{ route('experiences.edit', ['experience' => $experience->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('experiences.update', ['experience' => $experience->id]) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
         @else
@@ -344,12 +345,12 @@
             <section class="third-step">
                 <h2>Décrivez en détails l'expérience</h2>
                 <div>
-                    <label for="title">Titre</label>
+                    <label for="title">Titre*</label>
                     <input type="text" name="title" id="title" placeholder="Titre" <?php echo ($experience != null && Auth::check()) ? 'value="'.$experience->title.'"' : 'disabled'; ?>>
                 </div>
 
                 <div>
-                    <label for="description">Description</label>
+                    <label for="description">Description*</label>
                     @if($experience != null && Auth::check())
                         <textarea name="description" id="description" placeholder="Description">{{ $experience->description }}</textarea>
                     @else
@@ -390,6 +391,9 @@
                 </div>
                 @if($experience != null && Auth::check())
                     <input type="submit" value="Mettre à jour l'expérience">
+                    @if($experience != null && Auth::check())
+                        <button type="submit" name="published" value="published">Publier</button>
+                    @endif
                 @else
                     <input type="submit" value="Soumettre l'expérience">
                 @endif
@@ -504,18 +508,18 @@
 
         <?php 
             if($experience != null && Auth::check()) {
-                echo 'resumeEmail.textContent = "'.$experience->email.'";';
-                echo 'resumeFirstName.textContent = "'.$experience->first_name.'";';
-                echo 'resumeLastName.textContent = "'.$experience->last_name.'";';
-                echo 'resumeSiteName.textContent = "'.$experience->site_name.'";';
-                echo 'resumePlace.textContent = "'.$experience->place.'";';
+                echo 'resumeEmail.textContent = "'.addslashes($experience->email).'";';
+                echo 'resumeFirstName.textContent = "'.addslashes($experience->first_name).'";';
+                echo 'resumeLastName.textContent = "'.addslashes($experience->last_name).'";';
+                echo 'resumeSiteName.textContent = "'.addslashes($experience->site_name).'";';
+                echo 'resumePlace.textContent = "'.addslashes($experience->place).'";';
                 echo 'resumeDate.textContent = "'.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
-                echo 'resumeActivityId.textContent = "'.$experience->activity->name.'";';
-                echo 'resumeDistance.textContent = "'.$experience->distance.'";';
-                echo 'resumePriority.textContent = "'.$experience->priority.'";';
-                echo 'resumeTitle.textContent = "'.$experience->title.'";';
-                echo 'resumeDescription.textContent = "'.$experience->description.'";';
-                echo 'resumeImage.innerHTML = "<img src=\"'.$experience->image.'\" alt=\"\"/>";';
+                echo 'resumeActivityId.textContent = "'.addslashes($experience->activity->name).'";';
+                echo 'resumeDistance.textContent = "'.addslashes($experience->distance).'";';
+                echo 'resumePriority.textContent = "'.addslashes($experience->priority).'";';
+                echo 'resumeTitle.textContent = "'.addslashes($experience->title).'";';
+                echo 'resumeDescription.textContent = "'.addslashes($experience->description).'";';
+                echo 'resumeImage.innerHTML = "<img src=\"'.addslashes($experience->image).'\" alt=\"\"/>";';
             }
 
         ?>
@@ -718,6 +722,10 @@
         document.querySelector(".reset-all").addEventListener('click', function() {
             window.location.reload();
         });
+        window.onload = function() {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('max', today);
+        }
     </script>
 
 @endsection

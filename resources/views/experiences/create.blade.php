@@ -154,10 +154,6 @@
             font-weight: 700;
         }
 
-        #resume-site_name::after {
-            content: ',';
-        }
-
         #resume img {
             width: 100%;
         }
@@ -354,7 +350,7 @@
                     @if($experience != null && Auth::check())
                         <textarea name="description" id="description" placeholder="Description">{{ $experience->description }}</textarea>
                     @else
-                        <textarea name="description" id="description" placeholder="Description" disable></textarea>
+                        <textarea name="description" id="description" placeholder="Description" disabled></textarea>
                     @endif
                 </div>
 
@@ -378,7 +374,7 @@
                 <label id="resume-priority" for="priority" class="second-step"></label>
                 
                 <label id="resume-description" for="description" class="third-step"></label>
-                @if($experience != null && Auth::check())
+                @if($experience != null && Auth::check() && $experience->image)
                     <label id="resume-image" for="image" class="third-step"><img src="{{ $experience->image }}" alt=""></label>
                 @else
                     <label id="resume-image" for="image" class="third-step">Pas d'image renseignée</label>
@@ -511,15 +507,17 @@
                 echo 'resumeEmail.textContent = "'.addslashes($experience->email).'";';
                 echo 'resumeFirstName.textContent = "'.addslashes($experience->first_name).'";';
                 echo 'resumeLastName.textContent = "'.addslashes($experience->last_name).'";';
-                echo 'resumeSiteName.textContent = "'.addslashes($experience->site_name).'";';
+                echo 'resumeSiteName.textContent = "à '.addslashes($experience->site_name).', ";';
                 echo 'resumePlace.textContent = "'.addslashes($experience->place).'";';
-                echo 'resumeDate.textContent = "'.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
-                echo 'resumeActivityId.textContent = "'.addslashes($experience->activity->name).'";';
-                echo 'resumeDistance.textContent = "'.addslashes($experience->distance).'";';
-                echo 'resumePriority.textContent = "'.addslashes($experience->priority).'";';
+                echo 'resumeDate.textContent = "le '.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
+                echo 'resumeActivityId.textContent = "Activité : '.addslashes($experience->activity->name).'";';
+                echo 'resumeDistance.textContent = "Altitude :'.addslashes($experience->distance).'";';
+                echo 'resumePriority.textContent = "'.addslashes($experience->priority == 1 ? "Pas d'urgence" : ($experience->priority == 2 ? "À surveiller" : ($experience->priority == 3 ? "Urgent" : ($experience->priority == 4 ? "Dangereux" : "Non identifié"))) ).'";';
                 echo 'resumeTitle.textContent = "'.addslashes($experience->title).'";';
-                echo 'resumeDescription.textContent = "'.addslashes($experience->description).'";';
-                echo 'resumeImage.innerHTML = "<img src=\"'.addslashes($experience->image).'\" alt=\"\"/>";';
+                echo 'resumeDescription.textContent = "Description : '.addslashes($experience->description).'";';
+                if ($experience->image) {
+                    echo 'resumeImage.innerHTML = "<img src=\"'.addslashes($experience->image).'\" alt=\"\"/>";';
+                }
             }
 
         ?>
@@ -540,6 +538,7 @@
                 document.querySelector(".step-viewer li:nth-child(2)").classList.remove('active');
                 document.querySelector(".step-viewer li:nth-child(2)").classList.remove('done');
                 document.querySelector(".step-viewer li:last-child").classList.remove('active');
+                document.querySelector(".step-viewer li:last-child").classList.remove('done');
 
                 document.querySelector("#notification").style.display = 'none';
 
@@ -558,6 +557,7 @@
                     document.querySelector(".step-viewer li:nth-child(2)").classList.add('active');
                     document.querySelector(".step-viewer li:nth-child(2)").classList.remove('done');
                     document.querySelector(".step-viewer li:last-child").classList.remove('active');
+                    document.querySelector(".step-viewer li:last-child").classList.remove('done');
                     document.querySelector("#notification").style.display = 'none';
 
                     document.querySelector("#resume").classList.replace('active', 'hide');
@@ -583,6 +583,7 @@
                     document.querySelector("section.first-step").classList.remove('active');
                     document.querySelector("section.second-step").classList.add('active');
                     document.querySelector("section.third-step").classList.remove('active');
+                    document.querySelector(".step-viewer li:last-child").classList.remove('done');
 
                     document.querySelector(".step-viewer li:first-child").classList.replace('active', 'done');
                     document.querySelector(".step-viewer li:nth-child(2)").classList.add('active');
@@ -677,6 +678,7 @@
             }
             else if (document.querySelector("#resume").classList.contains('active')) {
                 document.querySelector("section.third-step").click();
+                document.querySelector(".step-viewer li:last-child").classList.replace('done', 'active');
             }
         });
 
@@ -690,6 +692,8 @@
             else if (title.value && description.value) {
                 document.querySelector("section.third-step").classList.replace('active', 'done');
                 document.querySelector("#resume").classList.replace('hide', 'active');
+                document.querySelector(".step-viewer li:last-child").classList.replace('active', 'done');
+
                 
             }
         });
@@ -697,26 +701,25 @@
         
 
         document.querySelector(".reset").addEventListener('click', function() {
-            console.log(document.querySelector("section.active"))
-            document.querySelector("section.active").querySelectorAll('input, select:not(#priority), textarea').forEach(function(input) {
-                input.value = '';
-                if (!email.value && !first_name.value && !last_name.value) {
-                    site_name.disabled = true;
-                    place.disabled = true;
-                    date.disabled = true;
-                    activity_id.disabled = true;
-                    distance.disabled = true;
-                    priority.disabled = true;
-                }
-
-                if (!site_name.value && !place.value && !date.value && !activity_id.value && !distance.value && !priority.value) {
-                    title.disabled = true;
-                    description.disabled = true;
-                    image.disabled = true;
-                }
-
-
-            });
+            if (document.querySelector("section.active").id != "resume") {
+                document.querySelector("section.active").querySelectorAll('input, select:not(#priority), textarea').forEach(function(input) {
+                    input.value = '';
+                    if (!email.value && !first_name.value && !last_name.value) {
+                        site_name.disabled = true;
+                        place.disabled = true;
+                        date.disabled = true;
+                        activity_id.disabled = true;
+                        distance.disabled = true;
+                        priority.disabled = true;
+                    }
+    
+                    if (!site_name.value && !place.value && !date.value && !activity_id.value && !distance.value && !priority.value) {
+                        title.disabled = true;
+                        description.disabled = true;
+                        image.disabled = true;
+                    }
+                });
+            }
         });
 
         document.querySelector(".reset-all").addEventListener('click', function() {

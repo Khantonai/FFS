@@ -85,7 +85,7 @@ class ExperienceController extends Controller
             'place' => 'required',
             'site_name' => 'required',
             'title' => 'required',
-            'date' => 'required|date',
+            'date' => 'required|date|before:now',
             'activity_id' => 'required|exists:activities,id',
             'description' => 'required',
             'distance' => 'required|integer',
@@ -110,7 +110,7 @@ class ExperienceController extends Controller
         ]);
 
 
-
+        
         $experience = new Experience();
         $experience->title = $request->input('title');
         $experience->site_name = $request->input('site_name');
@@ -144,7 +144,10 @@ class ExperienceController extends Controller
                 ->orderBy('updated_at', 'desc')
                 ->get();
             return view('experiences.show', ['experience' => $experience, 'edits' => $edits]);
-        } else {
+        } else if ($experience->published_at == null) {
+            return redirect()-> route('experiences.index');
+        }
+        else {
             return view('experiences.show', ['experience' => $experience, 'edits' => null]);
         }
     }
@@ -154,12 +157,21 @@ class ExperienceController extends Controller
      */
     public function edit(Experience $experience)
     {
-        //
-        if (Auth::check()) {
+        if (Auth::check() && $experience->published_at === null) {
             return view('experiences.create', ['experience' => $experience, 'activities' => Activity::all()]);
         } else {
-            return redirect('login');
+            return redirect('experiences');
         }
+    }
+
+    public function publish(Request $request, Experience $experience)
+    {
+        if ( $experience->published_at === null) {
+            $experience->published_at = now();
+            $experience->save();
+            return redirect()->route('users.index')->with('success',  "L'expérience été publiés avec succès");
+        }
+        return redirect()->route('users.index');
     }
 
     /**
@@ -175,7 +187,7 @@ class ExperienceController extends Controller
             'place' => 'required',
             'site_name' => 'required',
             'title' => 'required',
-            'date' => 'required|date',
+            'date' => 'required|date|before:now',
             'activity_id' => 'required|exists:activities,id',
             'description' => 'required',
             'distance' => 'required|integer',
@@ -217,19 +229,34 @@ class ExperienceController extends Controller
     
         $edit = Edit::where('experience_id', $experience->id)
         ->where('user_id', Auth::id())
-        ->first();
+        ->first();  
 
         if (!$edit) {
             $edit = new Edit();
         }
+        
         $edit->experience_id = $experience->id;
         $edit->user_id = Auth::id();
+        $edit->updated_at= now();
         $edit->save();
+
+        if ($request->input('published') == 'published') {
+            $experience->published_at = now();
+        }
+
 
         $experience->save();
         
-
-        return redirect()->route('experiences.show', ['experience' => $experience])->with('success', 'Expérience modifiée avec succès.');
+        
+        if ($experience->wasChanged()) {
+            if ($experience->published_at != null) {
+                return redirect()->route('users.index')->with('success',  "L'expérience été publiés avec succès");
+            } else {
+                return redirect()->route('experiences.show', ['experience' => $experience])->with('success', 'Expérience modifiée avec succès.');
+            }
+        } else {
+            return redirect()->route('users.index');
+        }
     }
 
     /**

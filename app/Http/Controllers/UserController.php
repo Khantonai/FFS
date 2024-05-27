@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Experience;
 use App\Models\Activity;
-use App\Models\Edit;
-use App\Models\Invitation;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+
 use DateTime;
 
 
@@ -89,13 +88,15 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pseudo' => 'required',
-            'email' => 'required|email',
+            'pseudo' => 'required|unique:users',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'confirmed_password' => 'required|same:password',
         ], [
             'pseudo.required' => 'Le pseudo est obligatoire',
+            'pseudo.unique' => 'Ce pseudo est déjà utilisé',
             'email.required' => 'L\'email est obligatoire',
+            'email.unique' => 'Cet email est déjà utilisé',
             'email.email' => 'L\'email doit être une adresse email valide.',
             'password.required' => 'Le mot de passe est obligatoire',
             'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
@@ -108,6 +109,8 @@ class UserController extends Controller
         $user->email = $request->input('email');
         $user->password = bcrypt($request->input('password'));
         $user->save();
+
+        Auth::login($user);
 
         return redirect()->route('experiences.index');
     }

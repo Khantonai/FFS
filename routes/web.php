@@ -32,7 +32,7 @@ Route::post('/dashboard', [LoginController::class, 'storeToken'])->name('users.s
 Route::get('/login', [LoginController::class, 'index'])->name('users.login');
 Route::post('/login', [LoginController::class, 'login'])->name('users.login');
 Route::get('/register', [UserController::class, 'create'])->name('users.create');
-Route::post('/regiter', [UserController::class, 'store'])->name('users.register');
+Route::post('/register', [UserController::class, 'store'])->name('users.register');
 Route::post('/logout', [LogoutController::class, 'logout'])->name('users.logout');
 
 

@@ -1,16 +1,17 @@
 <!-- resources/views/layouts/header.blade.php -->
 
-<header>
+<header id="header">
     <nav>
         <ul>
-            <li><a href="/">Accueil</a></li>
+            <li><a href="/"><img src="{{ asset('storage/images/logo.svg') }}" alt=""></a></li>
             <li><a href="{{ route('experiences.index') }}">Expériences</a></li>
+            <li><a href="{{ route('experiences.create') }}">Ajouter une expérience</a></li>
             @auth
             <li><a href="/dashboard">Dashboard</a></li>
                 <li>
                     <form method="POST" action="{{ route('users.logout') }}">
                         @csrf
-                        <button type="submit">Déconnexion</button>
+                        <button type="submit" class="header-button">Déconnexion</button>
                     </form>
                 </li>
             @else

@@ -1,0 +1,159 @@
+:root {
+    --green: #ccd100;
+    --red: #e94e00;
+    --blue: #0097ad;
+    --grey: #f8f8f8;
+    --black: #1b1b1f;
+}
+
+#header {
+    background-color: var(--black);
+    color: #fff;
+    width: fit-content;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+#header ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#header img {
+    width: 80px;
+    height: 80px;
+}
+
+#header a, #header button {
+    text-decoration: none;
+    color: #fff;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    font-size: 16px;
+}
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+body {
+    background: url("/storage/images/bat.png") #f7f7f7 no-repeat center center/contain fixed;
+    margin: 0;
+    padding: 10px;
+}
+
+h2 {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.button, button:not(.header-button), input[type="submit"] {
+    text-decoration: none;
+    color: #fff;
+    background-color: var(--blue);
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    display: inline-block;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+    padding: 6px 12px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.button:hover, button:hover, input[type="submit"]:hover {
+    background-color: var(--green);
+}
+
+.no-click {
+    cursor: not-allowed !important;
+    background-color: #ccc !important;
+
+}
+
+.divider {
+    border-top: 1px solid #fff;
+    width: 100%;
+}
+
+#search-form {
+    display: flex;
+    align-items: center;
+    column-gap: 50px;
+    row-gap: 10px;
+    flex-wrap: wrap;
+}
+
+#search-form > div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#search-form a, #search-form input[type="submit"] {
+    font-size: 16px;
+}
+
+#search-form input, #search-form select {
+    border-radius: 6px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td {
+    padding: 0.5rem;
+    width: fit-content;
+}
+th {
+    padding: 0.5rem;
+    background-color: var(--green);
+    width: fit-content;
+    text-align: left;
+
+}
+
+thead tr th:first-child {
+    border-top-left-radius: 16px;
+}
+
+thead tr th:last-child {
+    border-top-right-radius: 16px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #ccc;
+    height: 50px;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.clickable-row:hover {
+    background-color: #0097ad55;
+}
+
+.title-container {
+    position: absolute;
+    top: 50px;
+    left: 350px;
+}
+
+.title-container h1 {
+    font-size: 40px;;
+}
+.title-container h2 {
+    font-size: 30px;;
+}

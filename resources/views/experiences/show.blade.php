@@ -5,8 +5,8 @@
 @section('style')
 <style>
     main {
-        width: calc(100% - 460px);
-        padding: 40px;
+        width: calc(100% - 380px);
+        padding-left: 40px;
     }
 
     p {
@@ -14,8 +14,8 @@
     }
 
     h1 {
-
-        font-size: 4rem;
+        margin-block: 30px;
+        font-size: 3rem;
     }
 
     #location {
@@ -37,7 +37,8 @@
         flex-direction: column;
         gap: 1rem;
         align-items: center;
-
+        height: calc(100% - 20px);
+        overflow: auto;
     }
 
     #information>div {
@@ -68,24 +69,6 @@
         text-align: center;
     }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        width: fit-content;
-    }
-
-    td {
-        border: 1px solid #000;
-        padding: 0.5rem;
-        width: fit-content;
-    }
-
-    th {
-        border: 1px solid #000;
-        padding: 0.5rem;
-        background-color: #f0f0f0;
-        width: fit-content;
-    }
 </style>
 @endsection
 
@@ -143,16 +126,14 @@ switch ($experience->priority) {
                 <p>Non publié</p>
             @endif
         </div>
-        <a href="{{ route('experiences.index') }}" class="button">Retourner à la liste des expériences</a>
-        @auth
-            @if (!$experience->published_at)
+        @if (!$experience->published_at)
                 <a href="{{ route('experiences.edit', $experience->id) }}" class="button">Modifier</a>
                 <form method="POST" action="{{ route('experiences.publish', $experience->id) }}">
                     @csrf
                     <button type="submit" class="btn btn-primary" value="published">Publier</button>
                 </form>
-            @endif
-
+            @endif           
+        @auth
             <table>
                 <thead>
                     <tr>

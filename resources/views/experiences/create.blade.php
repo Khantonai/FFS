@@ -81,7 +81,7 @@
             right: 50vw;
             transform: translateX(50%);
             width: 400px;
-            height: min(600px, calc(100vh - 180px));
+            height: min(600px, calc(100vh - 270px));
             overflow-y: scroll;
             justify-content: flex-start;
         }
@@ -141,7 +141,6 @@
         #resume {
             display: flex;
             flex-direction: column;
-            margin-top: 1rem;
         }
 
         #resume label {
@@ -199,7 +198,7 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 20px;
+            bottom: 70px;
             width: 420px;
             gap: 1rem;
             display: flex;
@@ -208,13 +207,20 @@
 
         .nav {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 20px;
+        }
+        .nav button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
         }
 
         .reset-button {
             display: flex;
-            justify-content: center;
-            gap: 1rem;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         .alert-success {
@@ -240,7 +246,16 @@
             margin-bottom: 1rem;
         }
 
-        
+        .submit-container {
+            position: absolute;
+            bottom: 20px;
+            right: 50vw;
+            transform: translateX(50%);
+            width: 400px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
         
         
         
@@ -385,15 +400,17 @@
                     <label id="resume-first_name" for="first_name" class="first-step"></label>
                     <label id="resume-last_name" for="last_name" class="first-step"></label>
                 </div>
+            </section>
+            <div class="submit-container">
                 @if($experience != null && Auth::check())
                     <input type="submit" value="Mettre à jour l'expérience">
                     @if($experience != null && Auth::check())
                         <button type="submit" name="published" value="published">Publier</button>
                     @endif
                 @else
-                    <input type="submit" value="Soumettre l'expérience">
+                    <input type="submit" value="Soumettre l'expérience" class="submit-exp no-click" disabled>
                 @endif
-            </section>
+            </div>
         </form>
         <ul class="step-viewer">
             <li class="first-step active">1</li>
@@ -402,13 +419,23 @@
         </ul>
         <div class="form-button">
             <div class="nav">
-                <button class="prev">Précédent</button>
-                <button class="next">Suivant</button>
+                <button class="prev no-click">
+                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 12H20M4 12L8 8M4 12L8 16" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                </button>
+                <button class="next">
+                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                </button>
             </div>
+            <div style="border-top: 1px solid #000; width: 100%;"></div>
             <div class="reset-button">
                 <button class="reset">Réinitialiser cette étape</button>
                 <button class="reset-all">Tout réinitialiser</button>
             </div>
+            <div style="border-top: 1px solid #000; width: 100%;"></div>
         </div>
     </main>
    
@@ -455,7 +482,7 @@
         });
 
         site_name.addEventListener('input', function() {
-            resumeSiteName.textContent = site_name.value;
+            resumeSiteName.textContent = "à " + site_name.value + ", ";
         });
 
         place.addEventListener('input', function() {
@@ -468,19 +495,19 @@
             let month = String(dateObj.getMonth() + 1).padStart(2, '0');
             let year = dateObj.getFullYear();
 
-            resumeDate.textContent = `${day}/${month}/${year}`;
+            resumeDate.textContent = `le ${day}/${month}/${year}`;
         });
 
         activity_id.addEventListener('input', function() {
-            resumeActivityId.textContent = activity_id.options[activity_id.selectedIndex].text;
+            resumeActivityId.textContent = "Activité : " + activity_id.options[activity_id.selectedIndex].text;
         });
 
         distance.addEventListener('input', function() {
-            resumeDistance.textContent = distance.value;
+            resumeDistance.textContent = "Altitude : " + distance.value;
         });
 
         priority.addEventListener('input', function() {
-            resumePriority.textContent = priority.options[priority.selectedIndex].text;
+            resumePriority.textContent = "Priorité : " + priority.options[priority.selectedIndex].text;
         });
 
         title.addEventListener('input', function() {
@@ -488,7 +515,7 @@
         });
 
         description.addEventListener('input', function() {
-            resumeDescription.textContent = description.value;
+            resumeDescription.textContent = "Description : " + description.value;
         });
 
         image.addEventListener('change', function() {
@@ -507,16 +534,16 @@
                 echo 'resumeEmail.textContent = "'.addslashes($experience->email).'";';
                 echo 'resumeFirstName.textContent = "'.addslashes($experience->first_name).'";';
                 echo 'resumeLastName.textContent = "'.addslashes($experience->last_name).'";';
-                echo 'resumeSiteName.textContent = "à '.addslashes($experience->site_name).', ";';
+                echo 'resumeSiteName.textContent = "'.addslashes($experience->site_name).'";';
                 echo 'resumePlace.textContent = "'.addslashes($experience->place).'";';
-                echo 'resumeDate.textContent = "le '.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
-                echo 'resumeActivityId.textContent = "Activité : '.addslashes($experience->activity->name).'";';
-                echo 'resumeDistance.textContent = "Altitude :'.addslashes($experience->distance).'";';
+                echo 'resumeDate.textContent = "'.\Carbon\Carbon::parse($experience->date)->format('d/m/Y').'";';
+                echo 'resumeActivityId.textContent = "'.addslashes($experience->activity->name).'";';
+                echo 'resumeDistance.textContent = "'.addslashes($experience->distance).'";';
                 echo 'resumePriority.textContent = "'.addslashes($experience->priority == 1 ? "Pas d'urgence" : ($experience->priority == 2 ? "À surveiller" : ($experience->priority == 3 ? "Urgent" : ($experience->priority == 4 ? "Dangereux" : "Non identifié"))) ).'";';
                 echo 'resumeTitle.textContent = "'.addslashes($experience->title).'";';
-                echo 'resumeDescription.textContent = "Description : '.addslashes($experience->description).'";';
+                echo 'resumeDescription.textContent = "'.addslashes(str_replace(array("\r", "\n"), '', $experience->description)).'";';
                 if ($experience->image) {
-                    echo 'resumeImage.innerHTML = "<img src=\"'.addslashes($experience->image).'\" alt=\"\"/>";';
+                    echo 'resumeImage.innerHTML = "<img src=\''. asset("storage/" . addslashes($experience->image)) .'\'>";';
                 }
             }
 
@@ -542,6 +569,13 @@
 
                 document.querySelector("#notification").style.display = 'none';
 
+                document.querySelector(".prev").classList.add("no-click");
+                document.querySelector(".next").classList.remove("no-click");
+                try {
+                    document.querySelector(".submit-exp").classList.add("no-click");
+                    document.querySelector(".submit-exp").disabled = true; 
+                } catch (error) {}
+
                 document.querySelector("#resume").classList.replace('active', 'hide');
             });
         });
@@ -559,6 +593,13 @@
                     document.querySelector(".step-viewer li:last-child").classList.remove('active');
                     document.querySelector(".step-viewer li:last-child").classList.remove('done');
                     document.querySelector("#notification").style.display = 'none';
+
+                    document.querySelector(".prev").classList.remove("no-click");
+                    document.querySelector(".next").classList.remove("no-click");
+                    try {
+                        document.querySelector(".submit-exp").classList.add("no-click");
+                        document.querySelector(".submit-exp").disabled = true; 
+                    } catch (error) {}
 
                     document.querySelector("#resume").classList.replace('active', 'hide');
 
@@ -588,6 +629,13 @@
                     document.querySelector(".step-viewer li:first-child").classList.replace('active', 'done');
                     document.querySelector(".step-viewer li:nth-child(2)").classList.add('active');
                     document.querySelector("#notification").style.display = 'none';
+
+                    document.querySelector(".prev").classList.remove("no-click");
+                    document.querySelector(".next").classList.remove("no-click");
+                    try {
+                        document.querySelector(".submit-exp").classList.add("no-click");
+                        document.querySelector(".submit-exp").disabled = true; 
+                    } catch (error) {}
 
                     if (site_name.value && place.value && date.value && activity_id.value && distance.value && priority.value) {
                         document.querySelector("section.first-step").classList.remove('active');
@@ -692,6 +740,12 @@
             else if (title.value && description.value) {
                 document.querySelector("section.third-step").classList.replace('active', 'done');
                 document.querySelector("#resume").classList.replace('hide', 'active');
+                document.querySelector(".next").classList.add("no-click");
+                try {
+                    document.querySelector(".submit-exp").classList.remove("no-click");
+                    document.querySelector(".submit-exp").disabled = false;
+                } catch (error) { 
+                }
                 document.querySelector(".step-viewer li:last-child").classList.replace('active', 'done');
 
                 

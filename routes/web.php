@@ -9,7 +9,7 @@ use App\Http\Controllers\LogoutController;
 
 
 Route::get('/', function () {
-    return view('index');
+    return redirect()->route('experiences.index');
 });
 
 Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');

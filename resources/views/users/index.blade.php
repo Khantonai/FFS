@@ -7,7 +7,7 @@
     <h1>Bienvenue {{ Auth::user()->pseudo }}</h1>
     <h2>Dashboard</h2>
 </div>
-<form action="/experiences" method="GET" id="search-form">
+<form action="/dashboard" method="GET" id="search-form">
     <input type="text" name="search" placeholder="Rechercher..." id="search-field" value="{{ $search }}">
     <select name="activity-select" id="activity-select">
         <option value="">Toutes les activités</option>
